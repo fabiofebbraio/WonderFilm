@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WONDERFILM | Premium Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .animate-pop { animation: pop 0.3s ease-out; }
+        @keyframes pop { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gradient-red { background: linear-gradient(135deg, #e11d48 0%, #4c0519 100%); }
+    </style>
+</head>
+<body class="pb-24">
+
+    <header class="fixed top-0 w-full z-50 p-5 flex justify-between items-center bg-black/60 backdrop-blur-xl border-b border-white/5">
+        <h1 class="text-2xl font-black text-red-600 italic tracking-tighter uppercase">Wonder<span class="text-white">Film</span></h1>
+        <div id="badge-premium" class="hidden text-[10px] font-black text-yellow-500 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20 animate-pulse">WONDER+ 👑</div>
+    </header>
+
+    <main id="home-page" class="pt-24 animate-pop">
+        <section class="px-4 mb-6">
+            <div class="flex gap-2 overflow-x-auto no-scrollbar py-2">
+                <button onclick="filtrerCat('Tout')" class="cat-btn bg-red-600 px-6 py-3 rounded-2xl text-xs font-black uppercase whitespace-nowrap">Tout</button>
+                <button onclick="filtrerCat('Horreur')" class="cat-btn bg-white/5 px-6 py-3 rounded-2xl text-xs font-black uppercase border border-white/5">Horreur</button>
+                <button onclick="filtrerCat('Action')" class="cat-btn bg-white/5 px-6 py-3 rounded-2xl text-xs font-black uppercase border border-white/5">Action</button>
+                <button onclick="filtrerCat('Série')" class="cat-btn bg-white/5 px-6 py-3 rounded-2xl text-xs font-black uppercase border border-white/5">Séries</button>
+                <button onclick="filtrerCat('Animation')" class="cat-btn bg-white/5 px-6 py-3 rounded-2xl text-xs font-black uppercase border border-white/5">Animation</button>
+            </div>
+        </section>
+
+        <section class="px-4">
+            <h2 id="cat-title" class="text-xl font-black italic mb-6 uppercase tracking-tight ml-1">Populaires</h2>
+            <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                </div>
+        </section>
+    </main>
+
+    <main id="profile-page" class="hidden pt-32 px-6 animate-pop flex flex-col items-center min-h-screen text-center">
+        <div class="w-28 h-28 bg-zinc-900 rounded-[40px] border-4 border-red-600 mb-6 flex items-center justify-center shadow-2xl shadow-red-600/30">
+            <i class="fas fa-user-ninja text-5xl text-white"></i>
+        </div>
+        <h2 class="text-3xl font-black uppercase italic mb-1 tracking-tighter">Fabio</h2>
+        <p id="status-text" class="text-zinc-600 text-[10px] font-black uppercase tracking-[0.3em] mb-12">Membre Standard</p>
+
+        <div id="premium-box" class="w-full max-w-sm gradient-red p-8 rounded-[40px] shadow-2xl border border-white/10 relative overflow-hidden">
+            <div class="relative z-10 text-left">
+                <h3 class="text-2xl font-black italic mb-1">WONDER+ 👑</h3>
+                <p class="text-[10px] text-white/60 font-bold mb-8 uppercase tracking-widest">Qualité 4K • Sans Pub • Accès VIP</p>
+                <button onclick="demanderCodeVIP()" class="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-xs active:scale-95 transition-all shadow-lg">Activer l'abonnement</button>
+            </div>
+            <i class="fas fa-crown absolute -right-4 -bottom-4 text-9xl text-black/20 italic"></i>
+        </div>
+
+        <button onclick="ouvrirPinAdmin()" class="mt-16 text-zinc-800 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:text-red-600 transition-colors">
+            <i class="fas fa-terminal"></i> Administration Système
+        </button>
+    </main>
+
+    <div id="modal-player" class="hidden fixed inset-0 z-[100] bg-black overflow-y-auto animate-pop">
+        <div class="sticky top-0 w-full aspect-video bg-black shadow-2xl">
+            <iframe id="video-frame" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+            <button onclick="fermerModals()" class="absolute top-4 right-4 bg-black/60 w-12 h-12 rounded-full flex items-center justify-center border border-white/10 backdrop-blur-md">✕</button>
+        </div>
+        <div class="p-8 max-w-4xl mx-auto">
+            <div class="flex items-center gap-3 mb-4">
+                <span id="player-cat-tag" class="bg-red-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase italic">GENRE</span>
+                <span id="player-note" class="text-yellow-500 font-black text-xs uppercase italic">⭐ 0/10</span>
+            </div>
+            <h2 id="player-title" class="text-5xl font-black italic uppercase mb-6 tracking-tighter">Titre du Film</h2>
+            
+            <div class="flex flex-wrap gap-3 mb-10">
+                <button onclick="voirFilmComplet()" class="flex-1 bg-white text-black py-4 rounded-2xl font-black text-xs uppercase active:scale-95 transition-all">Regarder maintenant</button>
+                <button id="btn-trailer" onclick="voirBandeAnnonce()" class="flex-1 glass text-white py-4 rounded-2xl font-black text-xs uppercase border border-red-600/30 active:scale-95 transition-all">Bande-Annonce</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                <div>Sortie: <span id="player-date" class="text-white ml-2">2024</span></div>
+                <div>Réal: <span id="player-real" class="text-white ml-2">Inconnu</span></div>
+            </div>
+            
+            <p id="player-desc" class="text-zinc-400 text-sm leading-relaxed border-l-4 border-red-600 pl-6 italic"></p>
+        </div>
+    </div>
+
+    <div id="modal-admin" class="hidden fixed inset-0 z-[200] bg-[#080808] p-8 overflow-y-auto">
+        <div class="flex justify-between items-center mb-12">
+            <h2 class="text-3xl font-black italic text-red-600 tracking-tighter">DASHBOARD ADMIN</h2>
+            <button onclick="fermerModals()" class="w-12 h-12 glass rounded-full flex items-center justify-center">✕</button>
+        </div>
+        
+        <div class="max-w-2xl mx-auto space-y-6 pb-20">
+            <div class="space-y-4">
+                <p class="text-[10px] font-black uppercase text-zinc-600 tracking-[0.2em] mb-2">Ajouter un nouveau média</p>
+                <input type="text" id="add-titre" placeholder="Nom du film" class="w-full bg-white/5 p-5 rounded-2xl outline-none font-bold border border-white/5 focus:border-red-600 transition-colors">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="add-img" placeholder="Lien de l'affiche (URL)" class="w-full bg-white/5 p-5 rounded-2xl outline-none text-xs border border-white/5">
+                    <select id="add-cat" class="bg-white/5 p-5 rounded-2xl outline-none text-xs border border-white/5 font-black uppercase appearance-none">
+                        <option value="Action">Action</option>
+                        <option value="Horreur">Horreur</option>
+                        <option value="Série">Série</option>
+                        <option value="Animation">Animation</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="add-url" placeholder="Lien du Film Complet" class="w-full bg-white/5 p-5 rounded-2xl outline-none text-xs border border-white/10 text-red-500 font-bold">
+                    <input type="text" id="add-trailer" placeholder="Lien de la Bande-Annonce" class="w-full bg-white/5 p-5 rounded-2xl outline-none text-xs border border-white/10 text-blue-400 font-bold">
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <input type="text" id="add-note" placeholder="Note (ex: 8.5)" class="bg-white/5 p-5 rounded-2xl outline-none border border-white/5 text-center">
+                    <input type="text" id="add-date" placeholder="Année" class="bg-white/5 p-5 rounded-2xl outline-none border border-white/5 text-center">
+                    <input type="text" id="add-real" placeholder="Réalisateur" class="bg-white/5 p-5 rounded-2xl outline-none border border-white/5 text-center">
+                </div>
+
+                <textarea id="add-desc" placeholder="Résumé de l'intrigue..." class="w-full bg-white/5 p-5 rounded-2xl h-32 outline-none border border-white/5 text-xs italic"></textarea>
+                
+                <button onclick="publierFilm()" class="w-full gradient-red py-6 rounded-3xl font-black uppercase tracking-widest shadow-2xl shadow-red-600/20 active:scale-95 transition-all">Mettre en ligne sur WonderFilm</button>
+            </div>
+
+            <hr class="border-white/5 my-12">
+            <h3 class="text-xs font-black text-zinc-500 uppercase tracking-widest mb-6 italic">Films actuellement en ligne</h3>
+            <div id="admin-film-list" class="space-y-3">
+                </div>
+        </div>
+    </div>
+
+    <div id="modal-pin" class="hidden fixed inset-0 z-[300] bg-black/98 flex items-center justify-center p-6 backdrop-blur-3xl">
+        <div class="text-center w-full max-w-xs animate-pop">
+            <div class="w-20 h-20 glass rounded-full flex items-center justify-center mx-auto mb-8 border-red-600/50">
+                <i class="fas fa-fingerprint text-3xl text-red-600"></i>
+            </div>
+            <h3 class="text-white font-black italic mb-2 uppercase tracking-tight">Authentification Directeur</h3>
+            <p class="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em] mb-10">Entrez votre code de sécurité</p>
+            <input type="password" id="pin-input" placeholder="••••" class="bg-transparent border-b-2 border-red-600 text-center text-5xl w-full mb-12 outline-none tracking-[12px] font-black text-red-600">
+            <button onclick="verifierPin()" class="w-full gradient-red py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95 transition-all">Valider</button>
+            <button onclick="fermerModals()" class="mt-8 text-zinc-700 text-[10px] font-black uppercase tracking-widest">Retour</button>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 w-full bg-black/80 backdrop-blur-2xl border-t border-white/5 flex justify-around p-5 z-[80] pb-10">
+        <button onclick="changerPage('home')" class="nav-btn text-red-600 flex flex-col items-center gap-1 transition-all">
+            <i class="fas fa-th-large text-xl"></i>
+            <span class="text-[9px] font-black uppercase italic">Découvrir</span>
+        </button>
+        <button onclick="changerPage('profile')" class="nav-btn text-zinc-600 flex flex-col items-center gap-1 transition-all">
+            <i class="fas fa-user-ninja text-xl"></i>
+            <span class="text-[9px] font-black uppercase italic">Mon Profil</span>
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
